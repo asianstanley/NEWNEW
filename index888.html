@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSV Search Engine Pro</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    .navbar-brand img {
+      width: 200px;
+      height: auto;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    * {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #ffffff 40%, #000000 30%);
+      min-height: 100vh;
+    }
+
+    /* Modern Header */
+    .navbar-custom {
+      background-color: #FF9A00;
+      width: 100%;
+      padding: 10px 0;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .navbar-brand {
+      color: white !important;
+      font-weight: 700;
+      font-size: 1.5rem;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .navbar-toggler {
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 8px;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .navbar-toggler:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .navbar-toggler-icon {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='m4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    }
+
+    /* Main Container */
+    .main-container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px); /* Safari support */
+      border-radius: 20px;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    /* Card Styling */
+    .card-modern {
+      background: rgba(255, 255, 255, 0.9);
+      border: none;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      margin-bottom: 2rem;
+    }
+
+    .card-modern:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-header-modern {
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      border: none;
+      border-radius: 16px 16px 0 0 !important;
+      padding: 1.5rem;
+    }
+
+    .card-title {
+      margin: 0;
+      font-weight: 600;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Form Controls */
+    .form-control {
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.8);
+    }
+
+    .form-control:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      background: white;
+    }
+
+    .form-control-file {
+      border: 2px dashed #cbd5e0;
+      border-radius: 12px;
+      padding: 20px;
+      background: rgba(248, 250, 252, 0.8);
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .form-control-file:hover {
+      border-color: #6366f1;
+      background: rgba(99, 102, 241, 0.05);
+    }
+
+    /* Buttons */
+    .btn {
+      border-radius: 10px;
+      font-weight: 500;
+      padding: 10px 20px;
+      transition: all 0.3s ease;
+      border: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn:hover:before {
+      left: 100%;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-purple {
+      background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+    }
+
+    .btn-info {
+      background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+      box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+      box-shadow: 0 4px 15px rgba(100, 116, 139, 0.3);
+    }
+
+    /* Select Lists */
+    .select-modern {
+      min-height: 200px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 10px;
+    }
+
+    .select-modern option {
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin: 2px 0;
+    }
+
+    .select-modern option:checked {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      color: white;
+    }
+
+    /* Table */
+    .table-modern {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .table-modern thead {
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    }
+
+    .table-modern thead th {
+      color: white;
+      font-weight: 600;
+      padding: 1rem;
+      border: none;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+    }
+
+    .table-modern tbody tr {
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .table-modern tbody tr:nth-child(even) {
+      background: rgba(248, 250, 252, 0.8);
+    }
+
+    .table-modern tbody tr:nth-child(odd) {
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .table-modern tbody tr:hover {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+      transform: translateX(2px);
+    }
+
+    .table-modern td {
+      padding: 12px 16px;
+      border: none;
+      vertical-align: middle;
+    }
+
+    /* Menu Popup */
+    .menu-popup {
+      position: fixed;
+      top: 0;
+      right: -350px;
+      width: 350px;
+      height: 100vh;
+      background: linear-gradient(180deg, #6366f1 0%, #8b5cf6 100%);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px); /* Safari support */
+      box-shadow: -10px 0 40px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      padding: 2rem;
+      transition: right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .menu-popup.active {
+      right: 0;
+    }
+
+    .menu-popup a {
+      color: white;
+      text-decoration: none;
+      padding: 15px 20px;
+      margin: 8px 0;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .menu-popup a:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateX(5px);
+      text-decoration: none;
+      color: white;
+    }
+
+    .menu-popup .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .menu-popup .close-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: rotate(90deg);
+    }
+
+    .menu-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .menu-overlay.active {
+      display: block;
+      opacity: 1;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-fade-in {
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    /* Labels */
+    .form-label {
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .main-container {
+        margin: 1rem;
+        border-radius: 16px;
+      }
+      
+      .menu-popup {
+        width: 300px;
+        right: -300px;
+      }
+    }
+  </style>
+</head>
+<body class="bg-light">
+  <nav class="navbar navbar-light navbar-custom">
+    <div class="container-fluid">
+      <!-- Navbar brand with PNG image -->
+      <a class="navbar-brand" href="#">
+        <img src="https://github.com/asianstanley/TEST12345/blob/main/SEARCH%20ENGINE.gif?raw=true" alt="CSV Search Engine Logo" class="d-inline-block align-top">
+      </a>
+      
+      <button class="navbar-toggler" type="button" onclick="toggleMenu()" aria-label="Toggle navigation menu" title="Toggle Menu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
+  </nav>
+  
+  <div class="menu-popup" id="menuPopup">
+    <button class="close-btn" onclick="toggleMenu()" aria-label="Close menu" title="Close Menu">
+      <i class="fas fa-times"></i>
+    </button>
+    <nav aria-label="Main navigation">
+      <a href="DETAIL SMT.html">
+        <i class="fas fa-home"></i>
+        DETAIL SMT
+      </a>
+      <a href="Features.html">
+        <i class="fas fa-star"></i>
+        Features
+      </a>
+      <a href="#">
+        <i class="fas fa-info-circle"></i>
+        About
+      </a>
+    </nav>
+  </div>
+  <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+  
+  <div class="container">
+    <div class="main-container animate-fade-in">
+      <div class="p-4">
+        
+        <!-- File Upload & Search Section -->
+        <div class="row">
+          <div class="col-lg-6 mb-4">
+            <div class="card-modern">
+              <div class="card-header-modern">
+                <h5 class="card-title">
+                  <i class="fas fa-cloud-upload-alt text-primary"></i>
+                  File Upload
+                </h5>
+              </div>
+              <div class="p-4">
+                <div class="form-group">
+                  <label class="form-label" for="csvFile">
+                    <i class="fas fa-file-csv text-success"></i>
+                    Choose CSV File
+                  </label>
+                  <input type="file" class="form-control-file" id="csvFile" accept=".csv" aria-describedby="csvFileHelp">
+                  <small id="csvFileHelp" class="form-text text-muted">Select a CSV file to upload and process</small>
+                  <div class="mt-3">
+                    <button class="btn btn-secondary me-2" onclick="clearFileInput()" title="Clear file selection">
+                      <i class="fas fa-times me-1"></i> Clear
+                    </button>
+                    <button class="btn btn-success" onclick="exportCSV()" title="Export CSV data">
+                      <i class="fas fa-download me-1"></i> Export
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-lg-6 mb-4">
+            <div class="card-modern">
+              <div class="card-header-modern">
+                <h5 class="card-title">
+                  <i class="fas fa-search text-primary"></i>
+                  Search Data 
+                </h5>
+              </div>
+              <div class="p-4">
+                <div class="form-group">
+                  <label class="form-label" for="searchInput">
+                    <i class="fas fa-keyboard text-info"></i>
+                    Enter Search Data
+                  </label>
+                  <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Enter your search data..." aria-describedby="searchHelp">
+                    <div class="input-group-append">
+                      <button class="btn btn-primary" type="button" onclick="searchICSCode()" title="Search for ICS codes">
+                        <i class="fas fa-search me-1"></i> Search
+                      </button>
+                    </div>
+                  </div>
+                  <small id="searchHelp" class="form-text text-muted">Enter keywords to search in the CSV data</small>
+                  <div class="d-flex gap-2 flex-wrap">
+                    <button class="btn btn-purple" type="button" onclick="inserttable()" title="Insert data into table">
+                      <i class="fas fa-table me-1"></i> Insert Table
+                    </button>
+                    <button class="btn btn-secondary" type="button" onclick="clearSearchInput()" title="Clear search input">
+                      <i class="fas fa-eraser me-1"></i> Clear
+                    </button>
+                    <button class="btn btn-danger" onclick="clearAll()" title="Clear all data">
+                      <i class="fas fa-trash-alt me-1"></i> Clear All
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="row">
+          <div class="col-lg-6 mb-4">
+            <div class="card-modern">
+              <div class="card-header-modern">
+                <h5 class="card-title">
+                  <i class="fas fa-code text-warning"></i>
+                  ICS Code Results
+                </h5>
+              </div>
+              <div class="p-4">
+                <label for="resultsList" class="sr-only">ICS Code Search Results</label>
+                <select multiple class="form-control select-modern" id="resultsList" aria-label="ICS Code search results" title="Select ICS codes from search results">
+                  <!-- Results will be populated here -->
+                </select>
+                <button class="btn btn-info mt-3" onclick="copySelectedOptions('resultsList')" title="Copy selected ICS codes to clipboard">
+                  <i class="fas fa-copy me-1"></i> Copy ICS Code
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-lg-6 mb-4">
+            <div class="card-modern">
+              <div class="card-header-modern">
+                <h5 class="card-title">
+                  <i class="fas fa-cog text-warning"></i>
+                  Part Name Results
+                </h5>
+              </div>
+              <div class="p-4">
+                <label for="resultsList2" class="sr-only">Part Name Search Results</label>
+                <select multiple class="form-control select-modern" id="resultsList2" aria-label="Part name search results" title="Select part names from search results">
+                  <!-- Results will be populated here -->
+                </select>
+                <button class="btn btn-info mt-3" onclick="copySelectedOptions('resultsList2')" title="Copy selected part names to clipboard">
+                  <i class="fas fa-copy me-1"></i> Copy Part Name
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Data Table Section -->
+        <div class="row">
+          <div class="col-md-12 table-responsive">
+            <div class="form-group">
+              <label for="resultsTable">Program Name and Detail:</label>
+              <table class="table table-bordered table-striped table-modern" id="resultsTable">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">Feeder No.</th>
+                    <th scope="col">ICS Code</th>
+                    <th scope="col">Part Comment</th>
+                    <th scope="col">Fdr Type</th>
+                    <th scope="col">Pitch</th>
+                    <th scope="col">Program Name</th>
+                    <th scope="col">Mount Height</th>
+                    <th scope="col">Mount Timer</th>
+                    <th scope="col">Pick Height</th>
+                    <th scope="col">Pick Timer</th>
+                    <th scope="col">Pick Start</th>
+                    <th scope="col">Pick Speed</th>
+                    <th scope="col">XY Speed</th>
+                    <th scope="col">Pick Action</th>
+                    <th scope="col">Mount Action</th>
+                    <th scope="col">Mount Speed</th>
+                    <th scope="col">Body X</th>
+                    <th scope="col">Body Y</th>
+                    <th scope="col">Body Z</th>
+                    <th scope="col">Alignment Type</th>
+                    <th scope="col">Algorithm</th>
+                    <th scope="col">DatumAngle</th>
+                    <th scope="col">Nozzle</th>
+                    <th scope="col">TrayHeight</th>
+                  </tr> 
+                </thead>
+                <tbody>
+                  <!-- Data will be populated here -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="SCRIPT888.js"
+
+  <script>
+    // Menu Toggle Function
+    function toggleMenu() {
+      const menu = document.getElementById('menuPopup');
+      const overlay = document.getElementById('menuOverlay');
+      
+      menu.classList.toggle('active');
+      overlay.classList.toggle('active');
+    }
+
+    // Clear Functions
+    function clearFileInput() {
+      document.getElementById('csvFile').value = '';
+    }
+
+    function clearSearchInput() {
+      document.getElementById('searchInput').value = '';
+    }
+
+    function clearResultsList() {
+      document.getElementById('resultsList').innerHTML = '';
+    }
+
+    function clearResultsList2() {
+      document.getElementById('resultsList2').innerHTML = '';
+    }
+
+    function clearResultsTable() {
+      document.getElementById('resultsTable').getElementsByTagName('tbody')[0].innerHTML = '';
+    }
+    
+    function clearAll() {
+      clearSearchInput();
+      clearResultsList();
+      clearResultsList2();
+      clearResultsTable();
+    }
+
+    // Copy Selected Options Function
+    function copySelectedOptions(selectId) {
+      const select = document.getElementById(selectId);
+      const selected = [];
+      
+      for (let option of select.selectedOptions) {
+        selected.push(option.value);
+      }
+      
+      if (selected.length > 0) {
+        navigator.clipboard.writeText(selected.join('\n')).then(() => {
+          // Show success feedback
+          const btn = event.target.closest('button');
+          const originalText = btn.innerHTML;
+          btn.innerHTML = '<i class="fas fa-check me-1"></i> Copied!';
+          btn.classList.add('btn-success');
+          btn.classList.remove('btn-info');
+          
+          setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.classList.remove('btn-success');
+            btn.classList.add('btn-info');
+          }, 2000);
+        });
+      }
+    }
+
+    // Placeholder functions for other features
+    function searchICSCode() {
+      // Add your search logic here
+      console.log('Searching for:', document.getElementById('searchInput').value);
+    }
+
+    function inserttable() {
+      // Add your insert table logic here
+      console.log('Insert table functionality');
+    }
+
+    function exportCSV() {
+      // Add your export functionality here
+      console.log('Export CSV functionality');
+    }
+
+    // Add smooth scrolling and animations
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add entrance animations to cards
+      const cards = document.querySelectorAll('.card-modern');
+      cards.forEach((card, index) => {
+        setTimeout(() => {
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(20px)';
+          card.style.transition = 'all 0.6s ease';
+          
+          setTimeout(() => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+          }, 100);
+        }, index * 100);
+      });
+    });
+
+    // Keyboard navigation support
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        const menu = document.getElementById('menuPopup');
+        const overlay = document.getElementById('menuOverlay');
+        if (menu.classList.contains('active')) {
+          menu.classList.remove('active');
+          overlay.classList.remove('active');
+        }
+      }
+    });
+  </script>
+</body>
+</html>
