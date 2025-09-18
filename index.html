@@ -60,16 +60,24 @@
       background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='m4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
     }
 
-    /* Main Container */
+    /* Main Container - Safari Compatible Backdrop Filter */
     .main-container {
       background: rgba(255, 255, 255, 0.95);
+      /* Safari fallback */
+      -webkit-backdrop-filter: blur(20px);
       backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px); /* Safari support */
       border-radius: 20px;
       margin-top: 2rem;
       margin-bottom: 2rem;
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
       overflow: hidden;
+    }
+
+    /* Safari doesn't support backdrop-filter well, so we add a fallback */
+    @supports not (backdrop-filter: blur(20px)) {
+      .main-container {
+        background: rgba(255, 255, 255, 0.98);
+      }
     }
 
     /* Card Styling */
@@ -100,7 +108,13 @@
       color: #1e293b;
       display: flex;
       align-items: center;
+      /* Safari gap fallback */
       gap: 0.5rem;
+    }
+
+    /* Safari gap fallback for flex items */
+    .card-title > * + * {
+      margin-left: 0.5rem;
     }
 
     /* Form Controls */
@@ -133,7 +147,7 @@
       background: rgba(99, 102, 241, 0.05);
     }
 
-    /* Buttons */
+    /* Buttons - Safari Compatible */
     .btn {
       border-radius: 10px;
       font-weight: 500;
@@ -144,7 +158,8 @@
       overflow: hidden;
     }
 
-    .btn:before {
+    /* Safari compatible button hover effect */
+    .btn::before {
       content: '';
       position: absolute;
       top: 0;
@@ -152,10 +167,10 @@
       width: 100%;
       height: 100%;
       background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-      transition: left 0.5s;
+      transition: left 0.5s ease;
     }
 
-    .btn:hover:before {
+    .btn:hover::before {
       left: 100%;
     }
 
@@ -261,7 +276,7 @@
       vertical-align: middle;
     }
 
-    /* Menu Popup */
+    /* Menu Popup - Safari Compatible */
     .menu-popup {
       position: fixed;
       top: 0;
@@ -269,14 +284,22 @@
       width: 350px;
       height: 100vh;
       background: linear-gradient(180deg, #6366f1 0%, #8b5cf6 100%);
+      /* Safari fallback for backdrop-filter */
+      -webkit-backdrop-filter: blur(20px);
       backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px); /* Safari support */
       box-shadow: -10px 0 40px rgba(0, 0, 0, 0.2);
       z-index: 1000;
       padding: 2rem;
       transition: right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       display: flex;
       flex-direction: column;
+    }
+
+    /* Safari backdrop-filter fallback */
+    @supports not (backdrop-filter: blur(20px)) {
+      .menu-popup {
+        background: linear-gradient(180deg, rgba(99, 102, 241, 0.95) 0%, rgba(139, 92, 246, 0.95) 100%);
+      }
     }
 
     .menu-popup.active {
@@ -293,7 +316,13 @@
       font-weight: 500;
       display: flex;
       align-items: center;
+      /* Safari gap fallback */
       gap: 12px;
+    }
+
+    /* Safari gap fallback for menu links */
+    .menu-popup a > * + * {
+      margin-left: 12px;
     }
 
     .menu-popup a:hover {
@@ -343,7 +372,7 @@
       opacity: 1;
     }
 
-    /* Animations */
+    /* Animations - Safari Compatible */
     @keyframes fadeInUp {
       from {
         opacity: 0;
@@ -355,8 +384,21 @@
       }
     }
 
+    /* Safari compatible animation */
+    @-webkit-keyframes fadeInUp {
+      from {
+        opacity: 0;
+        -webkit-transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        -webkit-transform: translateY(0);
+      }
+    }
+
     .animate-fade-in {
       animation: fadeInUp 0.6s ease-out;
+      -webkit-animation: fadeInUp 0.6s ease-out;
     }
 
     /* Labels */
@@ -366,7 +408,43 @@
       margin-bottom: 8px;
       display: flex;
       align-items: center;
+      /* Safari gap fallback */
       gap: 8px;
+    }
+
+    /* Safari gap fallback for form labels */
+    .form-label > * + * {
+      margin-left: 8px;
+    }
+
+    /* Button group spacing - Safari Compatible */
+    .d-flex.gap-2 > * + * {
+      margin-left: 8px;
+    }
+
+    .flex-wrap {
+      flex-wrap: wrap;
+    }
+
+    /* Input group margin fix for Safari */
+    .input-group .btn {
+      margin-left: 0;
+    }
+
+    /* Safari specific fixes */
+    @media screen and (-webkit-min-device-pixel-ratio: 0) {
+      .form-control {
+        -webkit-appearance: none;
+      }
+      
+      .btn {
+        -webkit-appearance: none;
+        -webkit-border-radius: 10px;
+      }
+      
+      .card-modern {
+        -webkit-transform: translateZ(0);
+      }
     }
 
     /* Responsive */
@@ -379,6 +457,16 @@
       .menu-popup {
         width: 300px;
         right: -300px;
+      }
+
+      /* Mobile button spacing */
+      .d-flex.gap-2 {
+        flex-direction: column;
+      }
+      
+      .d-flex.gap-2 > * + * {
+        margin-left: 0;
+        margin-top: 8px;
       }
     }
   </style>
@@ -441,11 +529,11 @@
                   <input type="file" class="form-control-file" id="csvFile" accept=".csv" aria-describedby="csvFileHelp">
                   <small id="csvFileHelp" class="form-text text-muted">Select a CSV file to upload and process</small>
                   <div class="mt-3">
-                    <button class="btn btn-secondary me-2" onclick="clearFileInput()" title="Clear file selection">
-                      <i class="fas fa-times me-1"></i> Clear
+                    <button class="btn btn-secondary" onclick="clearFileInput()" title="Clear file selection" style="margin-right: 8px;">
+                      <i class="fas fa-times"></i> Clear
                     </button>
                     <button class="btn btn-success" onclick="exportCSV()" title="Export CSV data">
-                      <i class="fas fa-download me-1"></i> Export
+                      <i class="fas fa-download"></i> Export
                     </button>
                   </div>
                 </div>
@@ -471,20 +559,20 @@
                     <input type="text" class="form-control" id="searchInput" placeholder="Enter your search data..." aria-describedby="searchHelp">
                     <div class="input-group-append">
                       <button class="btn btn-primary" type="button" onclick="searchICSCode()" title="Search for ICS codes">
-                        <i class="fas fa-search me-1"></i> Search
+                        <i class="fas fa-search"></i> Search
                       </button>
                     </div>
                   </div>
                   <small id="searchHelp" class="form-text text-muted">Enter keywords to search in the CSV data</small>
                   <div class="d-flex gap-2 flex-wrap">
                     <button class="btn btn-purple" type="button" onclick="inserttable()" title="Insert data into table">
-                      <i class="fas fa-table me-1"></i> Insert Table
+                      <i class="fas fa-table"></i> Insert Table
                     </button>
                     <button class="btn btn-secondary" type="button" onclick="clearSearchInput()" title="Clear search input">
-                      <i class="fas fa-eraser me-1"></i> Clear
+                      <i class="fas fa-eraser"></i> Clear
                     </button>
                     <button class="btn btn-danger" onclick="clearAll()" title="Clear all data">
-                      <i class="fas fa-trash-alt me-1"></i> Clear All
+                      <i class="fas fa-trash-alt"></i> Clear All
                     </button>
                   </div>
                 </div>
@@ -509,7 +597,7 @@
                   <!-- Results will be populated here -->
                 </select>
                 <button class="btn btn-info mt-3" onclick="copySelectedOptions('resultsList')" title="Copy selected ICS codes to clipboard">
-                  <i class="fas fa-copy me-1"></i> Copy ICS Code
+                  <i class="fas fa-copy"></i> Copy ICS Code
                 </button>
               </div>
             </div>
@@ -529,7 +617,7 @@
                   <!-- Results will be populated here -->
                 </select>
                 <button class="btn btn-info mt-3" onclick="copySelectedOptions('resultsList2')" title="Copy selected part names to clipboard">
-                  <i class="fas fa-copy me-1"></i> Copy Part Name
+                  <i class="fas fa-copy"></i> Copy Part Name
                 </button>
               </div>
             </div>
@@ -586,7 +674,8 @@
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  <script src="SCRIPT888.js"
+  <!-- External Script - Make sure this file exists -->
+  <script src="SCRIPT888.js"></script>
 
   <script>
     // Menu Toggle Function
@@ -626,31 +715,69 @@
       clearResultsTable();
     }
 
-    // Copy Selected Options Function
+    // Safari Compatible Copy Function
     function copySelectedOptions(selectId) {
       const select = document.getElementById(selectId);
       const selected = [];
       
-      for (let option of select.selectedOptions) {
-        selected.push(option.value);
+      for (let i = 0; i < select.options.length; i++) {
+        if (select.options[i].selected) {
+          selected.push(select.options[i].value);
+        }
       }
       
       if (selected.length > 0) {
-        navigator.clipboard.writeText(selected.join('\n')).then(() => {
-          // Show success feedback
-          const btn = event.target.closest('button');
-          const originalText = btn.innerHTML;
-          btn.innerHTML = '<i class="fas fa-check me-1"></i> Copied!';
-          btn.classList.add('btn-success');
-          btn.classList.remove('btn-info');
-          
-          setTimeout(() => {
-            btn.innerHTML = originalText;
-            btn.classList.remove('btn-success');
-            btn.classList.add('btn-info');
-          }, 2000);
-        });
+        const textToCopy = selected.join('\n');
+        
+        // Safari compatible clipboard API with fallback
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(textToCopy).then(function() {
+            showCopyFeedback(event.target.closest('button'));
+          }).catch(function() {
+            // Fallback for Safari if clipboard API fails
+            fallbackCopy(textToCopy);
+            showCopyFeedback(event.target.closest('button'));
+          });
+        } else {
+          // Fallback method for older Safari versions
+          fallbackCopy(textToCopy);
+          showCopyFeedback(event.target.closest('button'));
+        }
       }
+    }
+
+    // Fallback copy method for Safari
+    function fallbackCopy(text) {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      textArea.style.top = '-999999px';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      
+      try {
+        document.execCommand('copy');
+      } catch (err) {
+        console.error('Copy failed:', err);
+      }
+      
+      document.body.removeChild(textArea);
+    }
+
+    // Show copy feedback
+    function showCopyFeedback(btn) {
+      const originalHTML = btn.innerHTML;
+      const originalClass = btn.className;
+      
+      btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+      btn.className = btn.className.replace('btn-info', 'btn-success');
+      
+      setTimeout(function() {
+        btn.innerHTML = originalHTML;
+        btn.className = originalClass;
+      }, 2000);
     }
 
     // Placeholder functions for other features
@@ -669,19 +796,22 @@
       console.log('Export CSV functionality');
     }
 
-    // Add smooth scrolling and animations
+    // Safari compatible DOM ready and animations
     document.addEventListener('DOMContentLoaded', function() {
-      // Add entrance animations to cards
+      // Safari compatible entrance animations
       const cards = document.querySelectorAll('.card-modern');
-      cards.forEach((card, index) => {
-        setTimeout(() => {
+      cards.forEach(function(card, index) {
+        setTimeout(function() {
           card.style.opacity = '0';
           card.style.transform = 'translateY(20px)';
+          card.style.webkitTransform = 'translateY(20px)'; // Safari prefix
           card.style.transition = 'all 0.6s ease';
+          card.style.webkitTransition = 'all 0.6s ease'; // Safari prefix
           
-          setTimeout(() => {
+          setTimeout(function() {
             card.style.opacity = '1';
             card.style.transform = 'translateY(0)';
+            card.style.webkitTransform = 'translateY(0)'; // Safari prefix
           }, 100);
         }, index * 100);
       });
@@ -698,6 +828,8 @@
         }
       }
     });
-  </script>
-</body>
-</html>
+
+    // Safari touch event support for mobile
+    if (/Safari/.test(navigator.userAgent) && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
+      document.addEventListener('touchstart', function() {}, true);
+    }
