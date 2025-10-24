@@ -412,7 +412,7 @@ function searchICSCode() {
             
             // Create cells for all 24 columns as per your HTML table structure
             const cells = [];
-            for (let i = 0; i < 24; i++) {
+            for (let i = 0; i < 27; i++) {
                 cells.push(row.insertCell(i));
             }
             
@@ -441,6 +441,10 @@ function searchICSCode() {
             cells[21].textContent = window.csvData[index]['DatumAngle'] || '';
             cells[22].textContent = window.csvData[index]['Nozzle'] || '';
             cells[23].textContent = window.csvData[index]['TrayHeight'] || '';
+            cells[24].textContent = window.csvData[index]['Offset_Num'] || '';
+            cells[25].textContent = window.csvData[index]['Offset XY'] || '';
+            cells[26].textContent = window.csvData[index]['Point'] || '';
+            cells[27].textContent = window.csvData[index]['Board'] || '';
             
             // Highlight matching cells
             cells.forEach(cell => {
@@ -471,83 +475,159 @@ function searchICSCode() {
     }
 }
 
-// Insert table function
 function inserttable() {
+    // Get search input value
+    var searchInput = document.getElementById('searchInput').value.trim().toLowerCase(); // Convert to lowercase
+    
+    // ตรวจสอบว่ามีข้อมูล CSV หรือไม่
     if (!window.csvData || window.csvData.length === 0) {
-        alert('กรุณาอัพโหลดไฟล์ CSV ก่อน');
+        alert('No CSV data available. Please upload a file first.');
         return;
     }
     
-    const resultsTableBody = document.getElementById('resultsTable').getElementsByTagName('tbody')[0];
-    const resultsList = document.getElementById('resultsList');
-    const resultsList2 = document.getElementById('resultsList2');
+    // ตรวจสอบว่ามี search input หรือไม่
+    if (!searchInput) {
+        alert('Please enter search criteria.');
+        return;
+    }
     
-    // Clear previous results
-    resultsTableBody.innerHTML = '';
-    resultsList.innerHTML = '';
-    resultsList2.innerHTML = '';
-    
-    const uniqueICS = new Set();
-    const uniquePart = new Set();
-    
-    // Display all data
-    window.csvData.forEach(function(rowData, index) {
-        const row = resultsTableBody.insertRow();
-        
-        // Create cells for all 24 columns
-        const cells = [];
-        for (let i = 0; i < 24; i++) {
-            cells.push(row.insertCell(i));
+    // Search for matching data
+    var foundIndexes = [];
+    for (var i = 0; i < window.csvData.length; i++) {
+        var matchFound = false;
+        // Check ICS Code, Part Comment, and other details for approximate match
+        if (window.csvData[i]['ICS Code'] && window.csvData[i]['ICS Code'].toLowerCase().includes(searchInput) ||
+            window.csvData[i]['Part Comment'] && window.csvData[i]['Part Comment'].toLowerCase().includes(searchInput)) {
+            foundIndexes.push(i);
+            matchFound = true;
+        } else {
+            // Check each property for approximate match
+            for (var prop in window.csvData[i]) {
+                if (window.csvData[i].hasOwnProperty(prop)) {
+                    var value = window.csvData[i][prop].toString().toLowerCase();
+                    // Perform approximate match check
+                    if (value.includes(searchInput)) {
+                        foundIndexes.push(i);
+                        matchFound = true;
+                        break; // Once a match is found, no need to check further
+                    }
+                }
+            }
         }
+    }
+
+    // If no matching data found, alert and return
+    if (foundIndexes.length === 0) {
+        alert('No matching data found.');
+        return;
+    }
+    
+    // Get elements
+    var resultsList = document.getElementById('resultsList');
+    var resultsList2 = document.getElementById('resultsList2');
+    var tableBody = document.getElementById('resultsTable').getElementsByTagName('tbody')[0];
+    
+    // Display all matching data in the table without clearing existing rows
+    foundIndexes.forEach(function(index) {
+        var newRow = tableBody.insertRow();
         
-        // Fill cells with data
-        cells[0].textContent = rowData['Feeder No.'] || '';
-        cells[1].textContent = rowData['ICS Code'] || '';
-        cells[2].textContent = rowData['Part Comment'] || '';
-        cells[3].textContent = rowData['Fdr Type'] || '';
-        cells[4].textContent = rowData['Pitch'] || '';
-        cells[5].textContent = rowData['Program Name'] || '';
-        cells[6].textContent = rowData['Mount Height'] || '';
-        cells[7].textContent = rowData['Mount Timer'] || '';
-        cells[8].textContent = rowData['Pick Height'] || '';
-        cells[9].textContent = rowData['Pick Timer'] || '';
-        cells[10].textContent = rowData['Pick Start'] || '';
-        cells[11].textContent = rowData['Pick Speed'] || '';
-        cells[12].textContent = rowData['XY Speed'] || '';
-        cells[13].textContent = rowData['Pick Action'] || '';
-        cells[14].textContent = rowData['Mount Action'] || '';
-        cells[15].textContent = rowData['Mount Speed'] || '';
-        cells[16].textContent = rowData['Body X'] || '';
-        cells[17].textContent = rowData['Body Y'] || '';
-        cells[18].textContent = rowData['Body Z'] || '';
-        cells[19].textContent = rowData['Alignment Type'] || '';
-        cells[20].textContent = rowData['Algorithm'] || '';
-        cells[21].textContent = rowData['DatumAngle'] || '';
-        cells[22].textContent = rowData['Nozzle'] || '';
-        cells[23].textContent = rowData['TrayHeight'] || '';
+        // สร้าง cells ตามโครงสร้างตารางเดิม (24 คอลัมน์)
+        var cell1 = newRow.insertCell(0);   // Feeder No.
+        var cell2 = newRow.insertCell(1);   // ICS Code
+        var cell3 = newRow.insertCell(2);   // Part Comment
+        var cell4 = newRow.insertCell(3);   // Fdr Type
+        var cell5 = newRow.insertCell(4);   // Pitch
+        var cell6 = newRow.insertCell(5);   // Program Name
+        var cell7 = newRow.insertCell(6);   // Mount Height
+        var cell8 = newRow.insertCell(7);   // Mount Timer
+        var cell9 = newRow.insertCell(8);   // Pick Height
+        var cell10 = newRow.insertCell(9);  // Pick Timer
+        var cell11 = newRow.insertCell(10); // Pick Start
+        var cell12 = newRow.insertCell(11); // Pick Speed
+        var cell13 = newRow.insertCell(12); // XY Speed
+        var cell14 = newRow.insertCell(13); // Pick Action
+        var cell15 = newRow.insertCell(14); // Mount Action
+        var cell16 = newRow.insertCell(15); // Mount Speed
+        var cell17 = newRow.insertCell(16); // Body X
+        var cell18 = newRow.insertCell(17); // Body Y
+        var cell19 = newRow.insertCell(18); // Body Z
+        var cell20 = newRow.insertCell(19); // Alignment Type
+        var cell21 = newRow.insertCell(20); // Algorithm
+        var cell22 = newRow.insertCell(21); // DatumAngle
+        var cell23 = newRow.insertCell(22); // Nozzle
+        var cell24 = newRow.insertCell(23); // TrayHeight
+        var cell25 = newRow.insertCell(24); // Offset_Num
+        var cell26 = newRow.insertCell(25); // Offset XY
+        var cell27 = newRow.insertCell(26); // Point
+        var cell28 = newRow.insertCell(27); // Board
+        // เติมข้อมูลในแต่ละ cell
+        cell1.textContent = window.csvData[index]['Feeder No.'] || '';
+        cell2.textContent = window.csvData[index]['ICS Code'] || '';
+        cell3.textContent = window.csvData[index]['Part Comment'] || '';
+        cell4.textContent = window.csvData[index]['Fdr Type'] || '';
+        cell5.textContent = window.csvData[index]['Pitch'] || '';
+        cell6.textContent = window.csvData[index]['Program Name'] || '';
+        cell7.textContent = window.csvData[index]['Mount Height'] || '';
+        cell8.textContent = window.csvData[index]['Mount Timer'] || '';
+        cell9.textContent = window.csvData[index]['Pick Height'] || '';
+        cell10.textContent = window.csvData[index]['Pick Timer'] || '';
+        cell11.textContent = window.csvData[index]['Pick Start'] || '';
+        cell12.textContent = window.csvData[index]['Pick Speed'] || '';
+        cell13.textContent = window.csvData[index]['XY Speed'] || '';
+        cell14.textContent = window.csvData[index]['Pick Action'] || '';
+        cell15.textContent = window.csvData[index]['Mount Action'] || '';
+        cell16.textContent = window.csvData[index]['Mount Speed'] || '';
+        cell17.textContent = window.csvData[index]['Body X'] || '';
+        cell18.textContent = window.csvData[index]['Body Y'] || '';
+        cell19.textContent = window.csvData[index]['Body Z'] || '';
+        cell20.textContent = window.csvData[index]['Alignment Type'] || '';
+        cell21.textContent = window.csvData[index]['Algorithm'] || '';
+        cell22.textContent = window.csvData[index]['DatumAngle'] || '';
+        cell23.textContent = window.csvData[index]['Nozzle'] || '';
+        cell24.textContent = window.csvData[index]['TrayHeight'] || '';
+        cell25.textContent = window.csvData[index]['Offset_Num'] || '';
+        cell26.textContent = window.csvData[index]['Offset XY'] || '';
+        cell27.textContent = window.csvData[index]['Point'] || '';
+        cell28.textContent = window.csvData[index]['Board'] || '';
         
-        // Collect unique values
-        const icsCode = rowData['ICS Code'];
-        const partComment = rowData['Part Comment'];
+        // Highlight matching cells
+        [cell1, cell2, cell3, cell4, cell5, cell6, cell7, cell8, cell9, cell10, cell11, cell12, cell13, cell14, cell15, cell16, cell17, cell18, cell19, cell20, cell21, cell22, cell23, cell24].forEach(function(cell) {
+            if (cell.textContent && cell.textContent.toLowerCase().includes(searchInput)) {
+                cell.style.backgroundColor = '#fffacd';
+                cell.style.fontWeight = 'bold';
+            }
+        });
         
-        if (icsCode && !uniqueICS.has(icsCode)) {
-            uniqueICS.add(icsCode);
-            const option = document.createElement('option');
+        // Insert into resultsList (ICS Code) - ตรวจสอบไม่ให้ซ้ำ
+        var icsCode = window.csvData[index]['ICS Code'] || '';
+        if (icsCode && !resultsList.querySelector('option[value="' + icsCode + '"]')) {
+            var option = document.createElement('option');
             option.value = icsCode;
             option.textContent = icsCode;
             resultsList.appendChild(option);
         }
         
-        if (partComment && !uniquePart.has(partComment)) {
-            uniquePart.add(partComment);
-            const option2 = document.createElement('option');
+        // Insert into resultsList2 (Part Comment) - ตรวจสอบไม่ให้ซ้ำ
+        var partComment = window.csvData[index]['Part Comment'] || '';
+        if (partComment && !resultsList2.querySelector('option[value="' + partComment + '"]')) {
+            var option2 = document.createElement('option');
             option2.value = partComment;
             option2.textContent = partComment;
             resultsList2.appendChild(option2);
         }
     });
-    
-    showSuccessMessage(`แสดงข้อมูลทั้งหมด ${window.csvData.length} รายการ`);
+
+    // Optional: Scroll to the newly added row (if needed)
+    if (tableBody.rows.length > 0) {
+        tableBody.rows[tableBody.rows.length - 1].scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'end', 
+            inline: 'nearest' 
+        });
+    }
+
+    // Optional: Display success message (if needed)
+    alert('Data inserted successfully. Added ' + foundIndexes.length + ' matching rows.');
 }
 
 // Export CSV function
