@@ -442,7 +442,7 @@ function searchICSCode() {
             cells[22].textContent = window.csvData[index]['DatumAngle'] || '';
             cells[23].textContent = window.csvData[index]['Nozzle'] || '';
             cells[24].textContent = window.csvData[index]['TrayHeight'] || '';
-            cells[25].textContent = window.csvData[index]['Offset_Num'] || '';
+            cells[25].textContent = window.csvData[index]['Offset Num'] || '';
             cells[26].textContent = window.csvData[index]['Offset XY'] || '';
             cells[27].textContent = window.csvData[index]['Point'] || '';
             cells[28].textContent = window.csvData[index]['Board'] || '';
@@ -588,7 +588,7 @@ function inserttable() {
         cell23.textContent = window.csvData[index]['DatumAngle'] || '';
         cell24.textContent = window.csvData[index]['Nozzle'] || '';
         cell25.textContent = window.csvData[index]['TrayHeight'] || '';
-        cell26.textContent = window.csvData[index]['Offset_Num'] || '';
+        cell26.textContent = window.csvData[index]['Offset Num'] || '';
         cell27.textContent = window.csvData[index]['Offset XY'] || '';
         cell28.textContent = window.csvData[index]['Point'] || '';
         cell29.textContent = window.csvData[index]['Board'] || '';
