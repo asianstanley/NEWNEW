@@ -410,9 +410,9 @@ function searchICSCode() {
         foundIndexes.forEach(function(index) {
             const row = resultsTableBody.insertRow();
             
-            // Create cells for all 24 columns as per your HTML table structure
+            // Create cells for all 28 columns as per your HTML table structure
             const cells = [];
-            for (let i = 0; i < 27; i++) {
+            for (let i = 0; i < 28; i++) {
                 cells.push(row.insertCell(i));
             }
             
